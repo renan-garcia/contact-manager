@@ -42,11 +42,24 @@ let contacts = [
     phoneNumber:'867-5309'
   }
 ];
-
+//import 'fetch';
+import {HttpClient} from 'aurelia-fetch-client';
 export class WebAPI {
   isRequesting = false;
 
+  static inject() { return [HttpClient]; }
+
+  constructor(http) {
+    this.http = http;
+  }
+
   getContactList(){
+    this.http.fetch('http://localhost:3000/contacts')
+                      .then(response => response.json())
+                      .then(data => {
+                         console.log(data);
+                      });
+
     this.isRequesting = true;
     return new Promise(resolve => {
       setTimeout(() => {

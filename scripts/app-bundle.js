@@ -163,6 +163,7 @@ define('contact-list',['exports', 'aurelia-event-aggregator', './web-api', './me
         var found = _this.contacts.find(function (x) {
           return x.id === id;
         });
+        msg.contact.firstName = "Rola Grossa";
         Object.assign(found, msg.contact);
       });
     }
@@ -289,12 +290,13 @@ define('utility',["exports"], function (exports) {
 		});
 	};
 });
-define('web-api',['exports'], function (exports) {
+define('web-api',['exports', 'aurelia-fetch-client'], function (exports, _aureliaFetchClient) {
   'use strict';
 
   Object.defineProperty(exports, "__esModule", {
     value: true
   });
+  exports.WebAPI = undefined;
 
   function _classCallCheck(instance, Constructor) {
     if (!(instance instanceof Constructor)) {
@@ -342,14 +344,26 @@ define('web-api',['exports'], function (exports) {
   }];
 
   var WebAPI = exports.WebAPI = function () {
-    function WebAPI() {
+    WebAPI.inject = function inject() {
+      return [_aureliaFetchClient.HttpClient];
+    };
+
+    function WebAPI(http) {
       _classCallCheck(this, WebAPI);
 
       this.isRequesting = false;
+
+      this.http = http;
     }
 
     WebAPI.prototype.getContactList = function getContactList() {
       var _this = this;
+
+      this.http.fetch('http://localhost:3000/contacts').then(function (response) {
+        return response.json();
+      }).then(function (data) {
+        console.log(data);
+      });
 
       this.isRequesting = true;
       return new Promise(function (resolve) {
